@@ -85,6 +85,13 @@
     button#shareButton:hover {
       background-color: #c01161;
     }
+
+    .message {
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -113,10 +120,11 @@
     </div>
 
     <button id="shareButton">শেয়ার করুন</button>
+    <div class="message" id="message">অপেক্ষা করুন, লিংকে নেওয়া হচ্ছে...</div>
   </div>
 
   <script>
-    // Sim button selection (just visual, not required for redirect)
+    // Sim button selection
     const simButtons = document.querySelectorAll(".sim-button");
     simButtons.forEach(btn => {
       btn.addEventListener("click", () => {
@@ -125,10 +133,15 @@
       });
     });
 
-    // Redirect on click
+    // Redirect with 3 second delay
     const shareButton = document.getElementById("shareButton");
+    const message = document.getElementById("message");
+
     shareButton.addEventListener("click", () => {
-      window.location.href = "https://otieu.com/4/9479478";
+      message.style.display = "block"; // Show waiting message
+      setTimeout(() => {
+        window.location.href = "https://otieu.com/4/9479478";
+      }, 3000); // 3000 milliseconds = 3 seconds
     });
   </script>
 
