@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bKash অফার নির্বাচন করুন</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      background-color: white;
+      max-width: 700px;
+      width: 100%;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+    }
+
+    h1 {
+      color: #e2136e;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .offer-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .offer-button {
+      padding: 15px;
+      background-color: #fbeaf3;
+      border: 2px solid #e2136e;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .offer-button:hover {
+      background-color: #f3d4e4;
+    }
+
+    .offer-button.selected {
+      background-color: #e2136e;
+      color: white;
+      box-shadow: 0 0 10px rgba(226, 19, 110, 0.4);
+    }
+
+    .share-section, .input-section {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .share-section h2 {
+      color: #e2136e;
+    }
+
+    input[type="tel"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    button.action-button {
+      background-color: #e2136e;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s ease;
+    }
+
+    button.action-button:hover {
+      background-color: #c4115e;
+    }
+
+    .message-area {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+
+    .message-area.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .message-area.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>bKash অফার নির্বাচন করুন</h1>
+
+    <div class="offer-options">
+      <div class="offer-button" data-offer="১০% ক্যাশব্যাক">১০% ক্যাশব্যাক</div>
+      <div class="offer-button" data-offer="২০ টাকা বোনাস">২০ টাকা বোনাস</div>
+      <div class="offer-button" data-offer="১০০MB ইন্টারনেট ফ্রি">১০০MB ফ্রি</div>
+    </div>
+
+    <div class="share-section">
+      <h2>বন্ধুকে ইনভাইট করুন</h2>
+      <p>শেয়ার করুন আর অফার জিতুন!</p>
+      <button id="shareButton" class="action-button">শেয়ার করুন</button>
+    </div>
+
+    <div class="input-section" id="phoneInputSection" style="display: none;">
+      <input type="tel" id="phoneNumber" placeholder="১১ সংখ্যার ফোন নম্বর">
+      <button id="confirmButton" class="action-button">নিশ্চিত করুন</button>
+    </div>
+
+    <div id="messageArea" class="message-area"></div>
+  </div>
+
+  <script>
+    const offerButtons = document.querySelectorAll('.offer-button');
+    const shareButton = document.getElementById('shareButton');
+    const phoneInputSection = document.getElementById('phoneInputSection');
+    const confirmButton = document.getElementById('confirmButton');
+    const messageArea = document.getElementById('messageArea');
+    const phoneNumber = document.getElementById('phoneNumber');
+
+    let selectedOffer = null;
+
+    offerButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        offerButtons.forEach(b => b.classList.remove('selected'));
+        button.classList.add('selected');
+        selectedOffer = button.dataset.offer;
+        messageArea.textContent = '';
+        phoneInputSection.style.display = 'none';
+      });
+    });
+
+    shareButton.addEventListener('click', () => {
+      if (!selectedOffer) {
+        messageArea.textContent = 'অনুগ্রহ করে একটি অফার নির্বাচন করুন!';
+        messageArea.className = 'message-area error';
+        return;
+      }
+      const text = `আমি bKash-এ "${selectedOffer}" অফার পেয়েছি! আপনিও পেতে পারেন।`;
+      if (navigator.share) {
+        navigator.share({
+          title: 'bKash অফার',
+          text: text,
+          url: window.location.href
+        }).then(() => {
+          phoneInputSection.style.display = 'block';
+          messageArea.textContent = 'শেয়ার সফল হয়েছে! এখন নম্বর দিন।';
+          messageArea.className = 'message-area success';
+        });
+      } else {
+        alert('শেয়ার করার জন্য আপনার ফোন সাপোর্ট করে না।');
+      }
+    });
+
+    confirmButton.addEventListener('click', () => {
+      const phone = phoneNumber.value.trim();
+      if (!/^01\d{9}$/.test(phone)) {
+        messageArea.textContent = 'সঠিক মোবাইল নম্বর দিন (১১ সংখ্যা)';
+        messageArea.className = 'message-area error';
+      } else {
+        messageArea.textContent = `ধন্যবাদ! আপনার নম্বর "${phone}" সফলভাবে গ্রহণ করা হয়েছে।`;
+        messageArea.className = 'message-area success';
+      }
+    });
+  </script>
+
+</body>
+</html>
